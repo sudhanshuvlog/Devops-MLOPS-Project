@@ -14,11 +14,11 @@ spec:
     spec:
       containers:
       - name: app
-        image: jinny1/model-expose-app
+        image: jinny1/model-expose-app:v1
         ports:
         - containerPort: 5000
       - name: backend-model
-        image: jinny1/weather-db-ingestion-model
+        image: jinny1/weather-db-ingestion-model:v1
 
       - name: database
         image: postgres:latest
@@ -43,4 +43,5 @@ spec:
     - protocol: TCP
       port: 5000
       targetPort: 5000
+      NodePort: 31933
   type: NodePort

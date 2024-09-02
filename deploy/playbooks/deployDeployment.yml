@@ -30,8 +30,38 @@
       shell: hostname -I | awk '{print $3}'
       register: third_ip
 
-    # - name: "Run socat"
-    #   shell: nohup socat TCP4-LISTEN:8080,fork,su=nobody TCP4:{{ third_ip.stdout }}:31933
-    #   async: 1
-    #   poll: 0
-    #   ignore_errors: true
+    - name: Check if socat service is running
+      systemd:
+        name: socat
+        state: started
+      register: socat_service_status
+      ignore_errors: true
+
+    - name: Create socat service file
+      copy:
+        dest: /etc/systemd/system/socat.service
+        content: |
+          [Unit]
+          Description=Socat TCP forwarder
+          After=network.target
+
+          [Service]
+          Type=simple
+          ExecStart=/usr/bin/socat TCP4-LISTEN:5000,fork,su=nobody TCP4:{{ third_ip.stdout }}:31933
+          Restart=always
+          User=nobody
+
+          [Install]
+          WantedBy=multi-user.target
+      when: socat_service_status.failed
+
+    - name: Reload systemd daemon
+      command: systemctl daemon-reload
+      when: socat_service_status.failed
+
+    - name: Enable and start socat service
+      systemd:
+        name: socat
+        enabled: true
+        state: started
+      when: socat_service_status.failed
