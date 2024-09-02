@@ -24,7 +24,7 @@ COPY models.py /app/
 COPY ingest_data.py /app/
 
 # Set environment variables
-ENV DATABASE_URL="postgresql+psycopg2://postgres:mysecretpassword@3.6.86.97:5432/weather_data"
+ENV DATABASE_URL="postgresql+psycopg2://postgres:mysecretpassword@127.0.0.1:5432/weather_data"
 
 CMD ["python", "create_db_model.py"] 
 # Run the script
