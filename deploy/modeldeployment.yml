@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: multi-container-app
+  name: model-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: multi-container-app
+      app: model-deployment
   template:
     metadata:
       labels:
-        app: multi-container-app
+        app: model-deployment
     spec:
       containers:
       - name: app
@@ -29,3 +29,18 @@ spec:
           value: "weather_data"
         - name: POSTGRES_PASSWORD
           value: "mysecretpassword"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-service
+spec:
+  selector:
+    app: model-deployment
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: NodePort

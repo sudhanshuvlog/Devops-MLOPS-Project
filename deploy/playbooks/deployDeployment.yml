@@ -5,14 +5,14 @@
   tasks:
     - name: Copy the deploment.yml file to Target Node
       copy:
-        src: ../deployment.yml
+        src: ../modeldeployment.yml
         dest: deployment.yml
     - name: Copy the script to the Target Node
       copy:
         src: ../startservers.sh
         dest: startservers.sh
     - name: Check if Deployment exists
-      command: "kubectl get deployment gfgdeployment"
+      command: "kubectl get deployment model-deployment"
       ignore_errors: true
       register: deployment_check
 
@@ -22,7 +22,7 @@
       ignore_errors: true
 
     - name: Rollout Deployment
-      command: "kubectl rollout restart deployment gfgdeployment"
+      command: "kubectl rollout restart deployment model-deployment"
       when: deployment_check.rc == 0  # Deployment exists
       ignore_errors: true
       
