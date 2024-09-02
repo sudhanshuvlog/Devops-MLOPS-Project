@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def ingest_weather_data(wx_data_dir):
-    # Set up the database connection
+    # Database connection
     engine = create_engine(os.getenv('DATABASE_URL'))
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -33,7 +33,7 @@ def ingest_weather_data(wx_data_dir):
             # Insert data into the database
             for _, row in df.iterrows():
                 weather_data = WeatherData(
-                    station_id=1,  # You need to define logic for station_id
+                    station_id=1,
                     date=pd.to_datetime(row['date'], format='%Y%m%d'),
                     max_temp=row['max_temp'],
                     min_temp=row['min_temp'],

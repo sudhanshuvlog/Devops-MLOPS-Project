@@ -2,14 +2,14 @@ from sqlalchemy import create_engine, Column, Integer, String, Date, Float, Fore
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# Define the database connection URL
+# Database connection URL
 DATABASE_URL = "postgresql+psycopg2://postgres:mysecretpassword@127.0.0.1:5432/weather_data"
 
-# Set up the database engine
+# Database engine setup
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 
-# Define the WeatherStation model
+# WeatherStation model defination
 class WeatherStation(Base):
     __tablename__ = 'weather_station'
     station_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -17,7 +17,7 @@ class WeatherStation(Base):
     latitude = Column(Float)
     longitude = Column(Float)
 
-# Define the WeatherData model
+# WeatherData model defination
 class WeatherData(Base):
     __tablename__ = 'weather_data'
     id = Column(Integer, primary_key=True, autoincrement=True)

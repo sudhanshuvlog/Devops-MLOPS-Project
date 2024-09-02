@@ -35,7 +35,7 @@ pipeline {
         }
         stage("Configure k8s cluster on the created infrastructure") {
             environment {
-                ANSIBLE_DIR = './deploy/playbooks' // Adjust this to the directory containing your ansible.cfg
+                ANSIBLE_DIR = './deploy/playbooks' //directory containing our ansible.cfg
             }
             steps {
                 dir("${ANSIBLE_DIR}") {
@@ -48,7 +48,7 @@ pipeline {
         }
         stage("Deploy the Webserver"){
             environment {
-                ANSIBLE_DIR = './deploy/playbooks' // Adjust this to the directory containing your ansible.cfg
+                ANSIBLE_DIR = './deploy/playbooks' // directory containing our ansible.cfg
             }
             steps{
                 dir("${ANSIBLE_DIR}") {
