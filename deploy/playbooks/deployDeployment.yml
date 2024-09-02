@@ -43,7 +43,7 @@
 
           [Service]
           Type=simple
-          ExecStart=/usr/bin/socat TCP4-LISTEN:5000,fork,su=nobody TCP4:{{ third_ip.stdout }}:31933
+          ExecStart=/usr/bin/socat TCP4-LISTEN:5000,fork TCP4:{{ third_ip.stdout }}:31933
           Restart=always
           User=nobody
 
