@@ -1,4 +1,4 @@
-# Advanced End-to-End DevOps Project 
+# MLOPS Project - ML Model Data Ingestion
 
 This repository contains an advanced end-to-end DevOps project that integrates various tools such as Git, Docker, Kubernetes, Helm, GitHub Actions, Jenkins, Terraform, Ansible, AWS, and Shell scripts. The project sets up a continuous integration and deployment pipeline.
 
@@ -8,12 +8,68 @@ This repository contains an advanced end-to-end DevOps project that integrates v
 
 ## WebApp Overview
 
-- We are going to deploy below game app on the K8s cluster.
-![Exposed API /api/weather](Screenshots/webapp-weather.png)
-![Exposed API /api/weather/stats](Screenshots/webapp-stats.png)
+- We are going to expose below API's `/api/weather` and `/api/weather/stats`.
+![Exposed API /api/weather](Screenshots/api-weather.png)
+![Exposed API /api/weather/stats](Screenshots/api-weather-stats.png)
 
 
-## Project Overview
+### Code Explanation
+
+This project consists of Python scripts that use SQLAlchemy to manage and ingest weather data into a PostgreSQL database. The project includes three main components: `PostgreSQL Database` , `Data Ingestion` and `Webapp`. The model ingestion code is present under `./backend` directory, and the WebApp code is present in the `app.py`
+
+- Files and Components
+    - *create_db.model.py*
+
+        - Purpose: Defines the database schema and sets up the initial database structure.
+        - Key Components:
+            -  SQLAlchemy Engine: Establishes a connection to a PostgreSQL database using the provided DATABASE_URL.
+            - Declarative Base: Base is used as the base class for all ORM models.
+          - Models:
+            - WeatherStation: Represents a weather station with fields for station_id, location, latitude, and longitude.
+            - WeatherData: Represents weather data associated with a specific station, including date, max_temp, min_temp, and precipitation.
+            - Unique Constraint: Ensures that no duplicate records exist for the same station_id and date.
+          
+      - *ingest_data.py*
+
+          - Purpose: Ingests weather data from text files into the PostgreSQL database.
+          - Key Components:
+              - Logging: Configures logging to track the ingestion process.
+              - Database Connection: Establishes a session with the database using SQLAlchemy.
+              - Data Ingestion:
+                - Reads text files from the specified directory.
+                - Cleans the data by replacing missing values (-9999) with NULL.
+                - Inserts data into the WeatherData table while checking for duplicates.
+                - Execution: The script is executed with a specified directory containing weather data files.
+
+    - *app.py*
+        - This `app.py` file is a Flask application designed to provide a RESTful API for accessing and analyzing weather data stored in a PostgreSQL database. The application uses SQLAlchemy for database interactions and Marshmallow for serialization.
+
+        - Components
+            - The Flask app is initialized and configured to connect to a PostgreSQL database using SQLAlchemy.
+            - Marshmallow is integrated with the app to handle object serialization and deserialization.
+            
+            - Database Models
+
+              - WeatherData: A SQLAlchemy model representing the `weather_data` table in the database.
+    
+                  - `id` : Primary key.
+                  - `date` : Date of the weather record.
+                  - `station_id`: ID of the weather station.
+                  - `max_temp`: Maximum temperature recorded (in Celsius).
+                  - `min_temp`: Minimum temperature recorded (in Celsius).
+                  - `precipitation`: Precipitation recorded (in millimeters).
+            
+              - API Routes
+
+                - GET `/api/weather`:
+                  Retrieves weather data records based on optional query parameters date and station_id.
+                  Returns a JSON array of weather data matching the provided filters.
+                  
+                - GET `/api/weather/stats`:
+                  Retrieves aggregated statistics for weather data, including average max/min temperatures and total precipitation for each station by year.
+
+
+## Project Overview - Create The End-To-End Devops Pipeline
 
 ### Step 1: Fork and Customize Repository
 
@@ -50,7 +106,7 @@ This repository contains an advanced end-to-end DevOps project that integrates v
 ### Step 9 Make Changes and Test
 - Make changes in your code locally, push to GitHub, and create a pull request.
 - GitHub Actions will build, and push the Docker image.
-- Merge the pull request to trigger the Jenkins pipeline, Which will deploy your app on top of k8s cluster
+- Merge the pull request to trigger the Jenkins pipeline(via webhooks), Which will deploy your app on top of k8s cluster
 
 ### Step 10: Jenkins Pipeline Stages
 - Git
@@ -62,6 +118,9 @@ This repository contains an advanced end-to-end DevOps project that integrates v
 - ![Jenkins Pipeline Stage View](Screenshots/jenkinspipeline.png)
 
 ### Step 11: Access the Exposed API
+- Login to k8s master node and create a socat, so the webserver can be used from outside the cluster
+- Get the IP address which is in the range of 192.168 from this command `hostname -I`  
+- Execute this command to start the socat `socat TCP4-LISTEN:5000,fork TCP4:IP:31933`
 - Visit http://<K8sMaster-ip>:5000 to see the deployed webserver.
 
 

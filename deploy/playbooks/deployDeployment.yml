@@ -31,32 +31,32 @@
       shell: hostname -I | awk '{print $3}'
       register: third_ip
 
-    - name: Start Service
-      command: "kubectl apply -f service.yml"
-    - name: Create socat service file
-      copy:
-        dest: /etc/systemd/system/socat.service
-        content: |
-          [Unit]
-          Description=Socat TCP forwarder
-          After=network.target
+    # - name: Start Service
+    #   command: "kubectl apply -f service.yml"
+    # - name: Create socat service file
+    #   copy:
+    #     dest: /etc/systemd/system/socat.service
+    #     content: |
+    #       [Unit]
+    #       Description=Socat TCP forwarder
+    #       After=network.target
 
-          [Service]
-          Type=simple
-          ExecStart=/usr/bin/socat TCP4-LISTEN:5000,fork TCP4:{{ third_ip.stdout }}:31933
-          Restart=always
-          User=nobody
+    #       [Service]
+    #       Type=simple
+    #       ExecStart=/usr/bin/socat TCP4-LISTEN:5000,fork TCP4:{{ third_ip.stdout }}:31933
+    #       Restart=always
+    #       User=nobody
 
-          [Install]
-          WantedBy=multi-user.target
+    #       [Install]
+    #       WantedBy=multi-user.target
 
-    - name: Reload systemd daemon
-      command: systemctl daemon-reload
+    # - name: Reload systemd daemon
+    #   command: systemctl daemon-reload
 
-    - name: Enable and start socat service
-      systemd:
-        name: socat
-        enabled: true
-        state: started
-    - name: "restart"
-      command: "kubectl rollout restart deployment model-deployment"
+    # - name: Enable and start socat service
+    #   systemd:
+    #     name: socat
+    #     enabled: true
+    #     state: started
+    # - name: "restart"
+    #   command: "kubectl rollout restart deployment model-deployment"

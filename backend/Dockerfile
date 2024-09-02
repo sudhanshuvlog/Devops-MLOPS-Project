@@ -1,4 +1,3 @@
-# Use the official Python image from the Docker Hub
 FROM python:3.9-slim
 
 # Install git to clone the repository
@@ -25,7 +24,7 @@ COPY ingest_data.py /app/
 
 # Set environment variables
 ENV DATABASE_URL="postgresql+psycopg2://postgres:mysecretpassword@127.0.0.1:5432/weather_data"
-
+#Create the db tables
 CMD ["python", "create_db_model.py"] 
-# Run the script
+# Start the data ingestion process
 CMD ["python", "ingest_data.py"]
