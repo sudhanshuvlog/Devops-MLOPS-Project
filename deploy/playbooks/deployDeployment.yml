@@ -7,10 +7,11 @@
       copy:
         src: ../modeldeployment.yml
         dest: deployment.yml
-    - name: Copy the script to the Target Node
+    - name: Copy the service to the Target Node
       copy:
-        src: ../startservers.sh
-        dest: startservers.sh
+        src: ../service.yml
+        dest: service.yml
+
     - name: Check if Deployment exists
       command: "kubectl get deployment model-deployment"
       ignore_errors: true
@@ -30,6 +31,8 @@
       shell: hostname -I | awk '{print $3}'
       register: third_ip
 
+    - name: Start Service
+      command: "kubectl apply -f service.yml"
     - name: Create socat service file
       copy:
         dest: /etc/systemd/system/socat.service
