@@ -24,6 +24,9 @@ jobs:
           with:
             username: ${{ secrets.DockerUsername }}
             password: ${{ secrets.DockerPassword }}
+
+        - name: Checkout the repo
+          uses: actions/checkout@v4
         - name: Build and push model frontend Dockerfile
           uses: docker/build-push-action@v6
           with:
