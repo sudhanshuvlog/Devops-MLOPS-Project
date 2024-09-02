@@ -1,6 +1,6 @@
 # Advanced End-to-End DevOps Project 
 
-This repository contains an advanced end-to-end DevOps project that integrates various tools such as Git, Docker, Kubernetes, Helm, GitHub Actions, Jenkins, Terraform, Ansible, Prometheus, Grafana, AWS, and Shell scripts. The project sets up a continuous integration and deployment pipeline.
+This repository contains an advanced end-to-end DevOps project that integrates various tools such as Git, Docker, Kubernetes, Helm, GitHub Actions, Jenkins, Terraform, Ansible, AWS, and Shell scripts. The project sets up a continuous integration and deployment pipeline.
 
 ## Architecture Diagram
 
@@ -9,9 +9,9 @@ This repository contains an advanced end-to-end DevOps project that integrates v
 ## WebApp Overview
 
 - We are going to deploy below game app on the K8s cluster.
-![Snake Game Webapp](Screenshots/webapp.png)
+![Exposed API /api/weather](Screenshots/webapp-weather.png)
+![Exposed API /api/weather/stats](Screenshots/webapp-stats.png)
 
-My recorded session for this project is uploaded on GeeksForGeeks - https://www.geeksforgeeks.org/batch/devops-22?tab=Live
 
 ## Project Overview
 
@@ -49,7 +49,7 @@ My recorded session for this project is uploaded on GeeksForGeeks - https://www.
 
 ### Step 9 Make Changes and Test
 - Make changes in your code locally, push to GitHub, and create a pull request.
-- GitHub Actions will build, test, and push the Docker image.
+- GitHub Actions will build, and push the Docker image.
 - Merge the pull request to trigger the Jenkins pipeline, Which will deploy your app on top of k8s cluster
 
 ### Step 10: Jenkins Pipeline Stages
@@ -58,34 +58,11 @@ My recorded session for this project is uploaded on GeeksForGeeks - https://www.
 - Setup Terraform
 - Create Infrastructure for PROD
 - Configure multi node k8s cluster on the created infrastructure
-- Configure Monitoring Tool
-- Deploy the Webserver
+- Deploy the Model, Which will perform data ingestion and api expose
 - ![Jenkins Pipeline Stage View](Screenshots/jenkinspipeline.png)
 
-### Step 11: Access the Deployed Webserver
-- Visit http://<your-Prodserver-ip>:8080 to see the deployed webserver.
-
-### Step 12 Create a Socat for Prometheus and Grafana to access them from the internet: 
-- Prometheus and Grafana servers are running they have been exposed also to the base system, but this k8s cluster we have created on AWS, So if you want to connect to these servers from the Internet(outside of your ec2 instance) you can create an extra socket(for my app webserver, I already did it with a shell script named `startservers.sh`) Simarly you can do for Prometheus and Grafana.
-- `#sudo minikube service prometheus-server-ext` This command will show you on which NodePort this Server is been exposed.
-- `#sudo socat TCP4-LISTEN:9090,fork,su=nobody TCP4:<minikube IP>:<Node Port> &` Now we have created a socket, So you can use the public IP of your ec2 server and access the Prometheus dashboard at port no 9090
-
-Simarly we can do for Grafana
-
-- `#sudo minikube service grafana-ext` - Get the NodePort
-- `#sudo socat TCP4-LISTEN:3000,fork,su=nobody TCP4:<minikube IP>:<Node Port> &`
-
-Get the Grafana dashboard at port no 3000 on your server
-
-### Step 13 Create Grafana Dashboard: 
-- Got to Grafana server - http://<your-Prodserver-ip>:3000
-- Add the Prometheus datasource to grafana
-- Visit [View Pre-Created Grafan Dashbords](https://grafana.com/grafana/dashboards/) to select a pre-created dashboard for monitoring the k8s server, you can copy that dashboard ID, and instead of creating the dashboard from scratch we can import a pre-created dashboard.
-- Now you are good to go! Visualize your complete k8s cluster Now!
-
-- ![Grafana Dashboard Monitoring K8s Cluster](Screenshots/GrafanaView.png)
-
-Connect with me on LinkedIn in any kind of challenges - [Linkedin](https://www.linkedin.com/in/sudhanshu--pandey/)
+### Step 11: Access the Exposed API
+- Visit http://<K8sMaster-ip>:5000 to see the deployed webserver.
 
 
 # Action Required: Update CRI-O Installation URL
@@ -105,5 +82,5 @@ Update the URL to the latest version. You can find the updated URL from the CRI-
 
 2) Long-term Solution:
 
-Instead of manually updating the URL every time, consider configuring a yum repository for CRI-O. This will allow the playbook to pull the latest version automatically, reducing the need for manual intervention.
+Instead of manually updating the URL every time, we can consider configuring a yum repository for CRI-O. This will allow the playbook to pull the latest version automatically, reducing the need for manual intervention.
 This approach will streamline the process and ensure that the playbook remains up-to-date with the latest CRI-O version.
