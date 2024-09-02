@@ -1,6 +1,13 @@
 # MLOPS Project - ML Model Data Ingestion
 
-This repository contains an advanced end-to-end DevOps project that integrates various tools such as Git, Docker, Kubernetes, Helm, GitHub Actions, Jenkins, Terraform, Ansible, AWS, and Shell scripts. The project sets up a continuous integration and deployment pipeline.
+I have created Dockerfiles for both the `web application` (which exposes the API) and the `model database ingestion`. These Dockerfiles are built by GitHub Actions, with workflows located under `.github/workflows`. Once the GitHub Action builds the images, they are pushed to `Docker Hub`. 
+  
+The Jenkins pipeline, defined in the `Jenkinsfile` under the `/build` directory, is then triggered. Jenkins, running on a multi-node cluster, sets up `Terraform`, which provisions the infrastructure on AWS. 
+
+Ansible configures a multi-node Kubernetes cluster, and the deployment files in the `deploy` directory are used to deploy the application, with the web application service exposed on a `NodePort`. The Docker Hub repositories for the images are available at model-expose-app and weather-db-ingestion-model.
+  
+- https://hub.docker.com/r/jinny1/model-expose-app
+- https://hub.docker.com/r/jinny1/weather-db-ingestion-model
 
 ## Architecture Diagram
 
@@ -69,6 +76,7 @@ This project consists of Python scripts that use SQLAlchemy to manage and ingest
                   Retrieves aggregated statistics for weather data, including average max/min temperatures and total precipitation for each station by year.
 
 
+
 ## Project Overview - Create The End-To-End Devops Pipeline
 
 ### Step 1: Fork and Customize Repository
@@ -121,7 +129,7 @@ This project consists of Python scripts that use SQLAlchemy to manage and ingest
 - Login to k8s master node and create a socat, so the webserver can be used from outside the cluster
 - Get the IP address which is in the range of 192.168 from this command `hostname -I`  
 - Execute this command to start the socat `socat TCP4-LISTEN:5000,fork TCP4:IP:31933`
-- Visit http://<K8sMaster-ip>:5000 to see the deployed webserver.
+- Visit http://< K8sMaster-ip >:5000 to see the deployed webserver.
 
 
 # Action Required: Update CRI-O Installation URL
