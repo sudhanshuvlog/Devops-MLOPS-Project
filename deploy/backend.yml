@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-container-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multi-container-app
+  template:
+    metadata:
+      labels:
+        app: multi-container-app
+    spec:
+      containers:
+      - name: app
+        image: jinny1/model-expose-app
+        ports:
+        - containerPort: 5000
+      - name: backend-model
+        image: jinny1/weather-db-ingestion-model
+
+      - name: database
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "weather_data"
+        - name: POSTGRES_PASSWORD
+          value: "mysecretpassword"
