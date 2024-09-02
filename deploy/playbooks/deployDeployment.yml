@@ -28,7 +28,7 @@
       ignore_errors: true
       
     - name: "Get the third IP address"
-      shell: hostname -I | awk '{print $2}'
+      shell: hostname -I | awk '{print $3}'
       register: third_ip
 
     - name: Start Service
@@ -58,3 +58,5 @@
         name: socat
         enabled: true
         state: started
+    - name: "restart"
+      command: "kubectl rollout restart deployment model-deployment"
