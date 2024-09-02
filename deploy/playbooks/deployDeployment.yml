@@ -30,13 +30,6 @@
       shell: hostname -I | awk '{print $3}'
       register: third_ip
 
-    - name: Check if socat service is running
-      systemd:
-        name: socat
-        state: started
-      register: socat_service_status
-      ignore_errors: true
-
     - name: Create socat service file
       copy:
         dest: /etc/systemd/system/socat.service
@@ -53,15 +46,12 @@
 
           [Install]
           WantedBy=multi-user.target
-      when: socat_service_status.failed
 
     - name: Reload systemd daemon
       command: systemctl daemon-reload
-      when: socat_service_status.failed
 
     - name: Enable and start socat service
       systemd:
         name: socat
         enabled: true
         state: started
-      when: socat_service_status.failed
